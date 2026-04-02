@@ -53,18 +53,55 @@
          2.SMAP Soil moisture variable : soil moisture  
          3.ERA5 Temperature variable: temperature_2m 
          4.Landsat Urban Classification variable : urban class   
+    วิธีการวิเคราะห์ 
+         1.คำนวณ NDVI จาก Sentinel-2 
+         2.Normalize ทุกตัวแปรให้อยู่ในช่วง 0–1 
+         3.รวมตัวแปรด้วย Weighted Overlay 
+              > Soil moisture (0.4) 
+              > NDVI (0.3) 
+              > Temperature (0.2) 
+              > Urban (0.1) 
+    สร้าง Fungal Suitability Index 
+         > ความละเอียด ใช้ resolution ประมาณ 500 m – 1 km 
+ส่วนที่ 3 Data Inventory
+          
+    > Sentinel-2 MSI COPERNICUS/S2 ปัญหาเมฆปกคลุม (Cloud cover) ในพื้นที่กรุงเทพฯ นนทบุรี และปทุมธานี 
+    > SMAP (NASA-USDA) NASA_USDA_HSL/SMAP10KM ความละเอียดเชิงพื้นที่ต่ำ (10km) อาจต้องมีการจัดรูปแบบข้อมูลให้เข้ากับตัวแปรอื่น 
+    > ERA5-Land NASA_USDA_HSL/SMAP10KM ข้อมูลเป็นค่าเฉลี่ยรายชั่วโมง/เดือน อาจไม่สะท้อน Micro-climate ในบางจุด 
+    > Landsat 8/9 LANDSAT/LC08/C02/T1_L2 รอบการบันทึกภาพ (Temporal resolution) ห่างกันประมาณ 16 วัน 
 
+ส่วนที่ 4: Methodology Flow
 
-
-
-
-
-
-
-
-
-
-
+     ขั้นตอนการทำงาน 
+          1.Data Collection 
+              > โหลดข้อมูลจาก Google Earth Engine 
+              > ตัดเฉพาะพื้นที่กรุงเทพมหานคร นนทบุรี ปทุมธานี 
+          2.Preprocessing 
+              > กำจัดเมฆ (Cloud masking) 
+              > คำนวณ NDVI 
+              > ปรับค่าข้อมูลให้อยู่ในช่วง 0–1 (Normalization)
+          3.Feature Preparation 
+              รวมตัวแปร: > NDVI 
+                        > LST (Land Surface Temperature) 
+                        > Urban density 
+                        > Soil moisture 
+          4.การวิเคราะห์ 
+              วิธีที่ 1: Weighted Overlay กำหนดน้ำหนัก เช่น 
+                      > Urban = 0.4 
+                      > Temperature = 0.3 
+                      > NDVI = 0.2 
+                      > Soil moisture = 0.1 
+                      > สร้าง Risk Index 
+              วิธีที่ 2: Machine Learning 
+                      > ใช้ Random Forest 
+                      > แบ่ง train/test 
+                      > ทำนายพื้นที่เสี่ยง 
+          5.Validation 
+              > Accuracy จาก train/test 
+              > เปรียบเทียบกับพื้นที่เมืองหนาแน่น 
+          6.Output 
+              > แผนที่ความเสี่ยง (สูง / กลาง / ต่ำ) 
+              > Visualization บน GEE 
 
 
 
